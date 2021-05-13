@@ -56,7 +56,7 @@ stock char[] CPrintTo(int client, const char[] phrase="", const char[] format=""
 				trie.SetValue("lightgreen"	, 0x05);
 				trie.SetValue("lime"		, 0x06);
 				trie.SetValue("yellow"		, 0x09);
-				trie.SetValue("orange"		, 0x10);
+				trie.SetValue("orange"		, 0x10);	// olive
 				trie.SetValue("pink"		, 0x0E);
 				trie.SetValue("purple"		, 0x03);
 				trie.SetValue("gray"		, 0x0A);
@@ -226,8 +226,23 @@ stock char[] CPrintTo(int client, const char[] phrase="", const char[] format=""
 				}
 			}
 		}
-	
+		
 		if (s[0]) {
+
+			int i = 0, iLastStart = 0;
+
+			while(s[i])
+			{
+				if(s[i] == '\n')
+				{
+					s[i] = 0;
+					PrintToChat(target, " %s", s[iLastStart]);
+					iLastStart = i+1;
+				}
+				
+				i++;
+			}
+
 			if (target == MENU) {
 				return s;
 			}
@@ -246,15 +261,15 @@ stock char[] CPrintTo(int client, const char[] phrase="", const char[] format=""
 					}
 					BfWriteByte  (hMsg, target);
 					BfWriteByte  (hMsg, true);
-					BfWriteString(hMsg, s);
+					BfWriteString(hMsg, s[iLastStart]);
 					EndMessage();
 				}
 				else{
-					PrintToChat(target, "%s%s", (s[0] == 0x01 ? "" : "\x01"), s);
+					PrintToChat(target, "%s%s", (s[0] == 0x01 ? "" : "\x01"), s[iLastStart]);
 				}
 			}
 			else{
-				PrintToChat(target, "%s%s", (s[0] == 0x01 ? "" : "\x01"), s);
+				PrintToChat(target, "%s%s", (s[0] == 0x01 ? "" : "\x01"), s[iLastStart]);
 				if (engine == Engine_CSGO) {
 					// В css если отправить сообщение в чат, то оно отображается и в консоле, но в csgo это не так.
 					PrintToConsole(target, "%s", s);
